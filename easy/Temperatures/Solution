@@ -1,0 +1,39 @@
+import java.util.*;
+import java.io.*;
+import java.math.*;
+
+/**
+ * Auto-generated code below aims at helping you parse
+ * the standard input according to the problem statement.
+ **/
+class Solution {
+
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+        int N = in.nextInt(); // the number of temperatures to analyse
+        in.nextLine();
+        
+        String TEMPS = "";
+        if (in.hasNext()) {
+            TEMPS = in.nextLine(); // the N temperatures expressed as integers ranging from -273 to 5526
+            
+            String[] temps = TEMPS.split(" ");
+            int closest = Integer.parseInt(temps[0]);
+            
+            for (int i=1; i < temps.length; i++) {
+                int current = Integer.parseInt(temps[i]);
+                if (Math.abs(closest) > Math.abs(current)) {
+                    closest = current;
+                } else if (Math.abs(closest) == Math.abs(current)) {
+                    if (Math.abs(closest) == current) {
+                        closest = current;    
+                    }
+                }
+            }
+            
+            System.out.println(closest);
+        } else {
+            System.out.println("0");
+        }
+    }
+}
