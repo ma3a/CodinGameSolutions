@@ -2,87 +2,69 @@ import java.util.*;
 import java.io.*;
 import java.math.*;
 
+/**
+ * Don't let the machines win. You are humanity's last hope...
+ **/
 class Player {
-    private static char[][] matrix = null;
-    private static int height;
-    private static int width;
+    private static final String NO_NEIGHBOR = "-1 -1";
 
     public static void main(String args[]) {
-        
         Scanner in = new Scanner(System.in);
-        width = in.nextInt(); 
+        int width = in.nextInt(); // the number of cells on the X axis
         in.nextLine();
-        height = in.nextInt();
-        System.err.println("w= " + width + "  h=" + height);
-        matrix = new char[height][width];
-
-        List<Node> nodes = new ArrayList<Node>();
-
+        int height = in.nextInt(); // the number of cells on the Y axis
         in.nextLine();
-        for (int y = 0; y < height; y++) {
-            String line = in.nextLine();
+        boolean[][] map = new boolean[height][width];
+        for (int i = 0; i < height; i++) {
 
-            for (int x=0 ; x < width; x++) {
-                matrix[y][x] = line.charAt(x);
-                if (notEmpty(x, y)) {
-                    Node node = new Node(x, y);
-                    nodes.add(node);
+            String line = in.nextLine(); // width characters, each either 0 or .
+            System.err.println(line);
+            fillElementsFromString(map[i], line);
+        }
+
+        printEveryElementNeightbors(map);
+    }
+
+    private static void fillElementsFromString(boolean[] line, String lineToRead) {
+        for (int i =0; i<line.length; i++) {
+            if (lineToRead.charAt(i) == '0') {
+                line[i] = true;
+            } else {
+                line[i] = false;
+            }
+        }
+    }
+
+    private static void printEveryElementNeightbors(boolean[][] map) {
+        for (int row=0; row<map.length; row++) {
+            for (int column=0; column<map[row].length; column++) {
+                System.err.println(column + " " + row + " " + map[row][column]);
+                if (map[row][column] == true) {
+                    System.out.println(column + " " + row + 
+                                       " " + getRightNeighbor(row, column, map) +
+                                       " " + getBottomNeighbor(row, column, map));
                 }
             }
         }
-
-        System.err.println(" ######################################");
-        for (Node node : nodes) {
-            System.err.println("  " + node + "   val=" + matrix[node.y][node.x]);
-            System.out.println(node + " " + right(node.x, node.y) + " " + bottom(node.x, node.y));
-        }
     }
 
-    private static boolean notEmpty(int x, int y) {
-        if (x >= width || y >= height) {
-            return false;
-        }
-        System.err.println("            x=" + x + "  y=" + y + "  val" + matrix[y][x]);
-        if ('0' == matrix[y][x]) {
-            return true;
-        }
-        return false;
-    }
-
-    private static Node right(int x, int y) {
-        for (int i = x + 1; i < width; i++) {
-            if (notEmpty(i,y)) {
-                return new Node(i,y);
+    private static String getRightNeighbor(int row, int column, boolean[][] map) {
+        for (int i = column + 1; i < map[row].length; i++) {
+            System.err.println(map[row][i]);
+            if (Boolean.TRUE.equals(map[row][i])) {
+                return (column + 1) + " " + row;
             }
         }
-        return Node.falseNode();
+        return NO_NEIGHBOR;
     }
 
-    private static Node bottom(int x, int y) {
-        for (int i = y + 1; i < height; i++) {
-            
-            if (notEmpty(x,i)) {
-                return new Node(x,i);
+    private static String getBottomNeighbor(int row, int column, boolean[][] map) {
+        for (int i = row + 1; i < map.length; i++) {
+            if (map[i][column] == true) {
+                return column + " " + (row + 1);
             }
         }
-        return Node.falseNode();
-    }
-}
-
-class Node {
-    int x;
-    int y;
-
-    public Node(int x, int y) {
-        this.x = x;
-        this.y = y;
+        return NO_NEIGHBOR;
     }
 
-    public static Node falseNode() {
-        return new Node(-1, -1);
-    }
-
-    public String toString() {
-        return x + " " + y;
-    }
 }
